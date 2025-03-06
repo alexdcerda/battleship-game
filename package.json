@@ -15,6 +15,7 @@
     "@babel/preset-env": "^7.26.9",
     "babel-core": "^6.26.3",
     "babel-jest": "^29.7.0",
+    "jest": "^29.7.0",
     "regenerator-runtime": "^0.14.1",
     "vite": "^6.2.0"
   }
