@@ -1,13 +1,71 @@
-<!doctype html>
+<!-- index.html -->
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
-  </head>
-  <body>
-    <div id="app"></div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battleship Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .game-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(10, 30px);
+            grid-template-rows: repeat(10, 30px);
+            gap: 2px;
+        }
+        .cell {
+            width: 30px;
+            height: 30px;
+            background-color: #ddf;
+            border: 1px solid #99b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .board-container {
+            margin: 10px;
+        }
+        .hit {
+            background-color: #f88;
+        }
+        .miss {
+            background-color: #aaa;
+        }
+        .ship {
+            background-color: #8a8;
+        }
+    </style>
+</head>
+<body>
+    <h1>Battleship Game</h1>
+    <div class="game-status">
+        <p id="status-message">Place your ships on the left board</p>
+    </div>
+    <div class="game-container">
+        <div class="board-container">
+            <h2>Your Board</h2>
+            <div id="player-board" class="board"></div>
+        </div>
+        <div class="board-container">
+            <h2>Opponent's Board</h2>
+            <div id="computer-board" class="board"></div>
+        </div>
+    </div>
+
     <script type="module" src="/src/main.js"></script>
-  </body>
+</body>
 </html>

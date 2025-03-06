@@ -1,24 +1,26 @@
-import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
+import Ship from "./ship";
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
+// dom elements
+const playerBoard = document.getElementById("player-board");
+const computeBoard = document.getElementById("computer-board");
+const statusMessage = document.getElementById("status-message");
 
-setupCounter(document.querySelector('#counter'))
+// create 10 x 10 baord
+const renderBoard = (boardElement) => {
+  boardElement.innerHTML = "";
+  for (let row = 0; row < 10; row++) {
+    for (let column = 0; column < 10; column++) {
+      const cell = document.createElement("div");
+      cell.classList.add("cell");
+      cell.dataset.row = row;
+      cell.dataset.col = column;
+    }
+  }
+};
+
+renderBoard(playerBoard)
+renderBoard(computeBoard)
+
+
+// create ship and place on baord
+
