@@ -1,13 +1,15 @@
 :root {
-  --primary-color: #3498db;
-  --secondary-color: #2c3e50;
-  --accent-color: #e74c3c;
-  --light-color: #ecf0f1;
-  --dark-color: #2c3e50;
-  --success-color: #2ecc71;
-  --warning-color: #f39c12;
-  --danger-color: #e74c3c;
+  /* Naval theme color palette */
+  --ocean-blue: #0a3d62;
+  --deep-blue: #1e3799;
+  --light-blue: #82ccdd;
+  --navy: #192a56;
+  --seafoam: #55efc4;
+  --hit-red: #e74c3c;
+  --miss-white: #ecf0f1;
   --ship-color: #7f8c8d;
+  
+  /* Sizing and spacing */
   --cell-size: 35px;
   --border-radius: 8px;
   --transition-speed: 0.3s;
@@ -23,8 +25,8 @@
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
-  color: var(--dark-color);
-  background-color: var(--light-color);
+  color: var(--navy);
+  background: linear-gradient(to bottom, var(--ocean-blue), var(--deep-blue));
   min-height: 100vh;
   padding: 2rem;
 }
@@ -41,23 +43,25 @@ header {
 
 h1 {
   font-size: 2.5rem;
-  color: var(--secondary-color);
+  color: white;
   margin-bottom: 0.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 h2 {
   font-size: 1.5rem;
-  color: var(--secondary-color);
+  color: var(--navy);
   margin-bottom: 1rem;
 }
 
 .game-status {
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.9);
   padding: 1rem;
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
   margin-bottom: 2rem;
   text-align: center;
+  border: 8px solid var(--light-blue);
 }
 
 #status-message {
@@ -77,6 +81,19 @@ h2 {
   padding: 1.5rem;
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
+  position: relative;
+}
+
+/* Add coordinate labels */
+.board-container::before,
+.board-container::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
 .board {
@@ -84,13 +101,42 @@ h2 {
   grid-template-columns: repeat(10, var(--cell-size));
   grid-template-rows: repeat(10, var(--cell-size));
   gap: 2px;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  margin-left: 1.5rem;
+  position: relative;
+  border: 2px solid var(--navy);
+}
+
+.board::before {
+  content: 'A B C D E F G H I J';
+  position: absolute;
+  top: -25px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  color: white;
+  font-weight: bold;
+  letter-spacing: 1px;
+  font-size: 14px;
+}
+
+/* Row labels (numbers) */
+.row-label {
+  position: absolute;
+  left: -25px;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  width: 20px;
+  text-align: center;
+  transform: translateY(-50%);
 }
 
 .cell {
   width: var(--cell-size);
   height: var(--cell-size);
-  background: rgba(130, 204, 221, 0.8);
+  background-color: rgba(130, 204, 221, 0.8);
   border: 1px solid rgba(52, 152, 219, 0.3);
   display: flex;
   align-items: center;
@@ -101,7 +147,7 @@ h2 {
 }
 
 .cell:hover {
-  background-color: rgba(52, 152, 219, 0.2);
+  background-color: rgba(52, 152, 219, 0.3);
 }
 
 .cell:after {
@@ -111,9 +157,11 @@ h2 {
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('wave-pattern.svg');
-  opacity: 0.2;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.1) 75%, transparent 75%, transparent);
+  background-size: 10px 10px;
+  opacity: 0.1;
   animation: wave 8s linear infinite;
+  pointer-events: none;
 }
 
 @keyframes wave {
@@ -122,23 +170,59 @@ h2 {
 }
 
 .ship {
+  display: grid;
   background-color: var(--ship-color);
+  cursor: grab;
+  border-radius: 4px;
+  transition: all var(--transition-speed);
+  position: relative;
 }
 
 .hit {
-  background-color: var(--danger-color);
-  animation: pulse 1s;
+  background-color: var(--hit-red);
+  animation: explosion 0.6s;
+  position: relative;
+}
+
+@keyframes explosion {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.hit::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle, rgba(255,100,100,0.8) 0%, rgba(231,76,60,0.4) 70%);
+  border-radius: 50%;
+  opacity: 0.7;
 }
 
 .miss {
-  background-color: var(--light-color);
+  background-color: var(--light-blue);
   position: relative;
 }
 
 .miss::after {
-  content: '•';
-  font-size: 1.5rem;
-  color: var(--dark-color);
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: splash 0.5s forwards;
+}
+
+@keyframes splash {
+  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
 }
 
 .highlight-valid {
@@ -151,11 +235,13 @@ h2 {
 
 /* Ship container styles */
 .ships-container {
-  background-color: white;
+  background: linear-gradient(to bottom, var(--deep-blue), var(--navy));
   padding: 1.5rem;
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
   margin-bottom: 2rem;
+  color: white;
+  border: 8px solid var(--light-blue);
 }
 
 .ships-heading {
@@ -165,11 +251,17 @@ h2 {
   margin-bottom: 1rem;
 }
 
+.ships-heading h2 {
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
 #ship-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  justify-content: center;
 }
 
 .ship-item {
@@ -177,14 +269,11 @@ h2 {
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
+  transition: transform 0.3s ease;
 }
 
-.ship {
-  display: grid;
-  background-color: var(--ship-color);
-  cursor: grab;
-  border-radius: 4px;
-  transition: all var(--transition-speed);
+.ship-item:hover {
+  transform: translateY(-5px);
 }
 
 .ship[data-orientation="horizontal"] {
@@ -203,11 +292,24 @@ h2 {
   width: var(--cell-size);
   height: var(--cell-size);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+/* Ship parts styling */
+.ship-cell:first-child {
+  border-radius: 50% 0 0 50%;
+  background-color: #34495e;
+}
+
+.ship-cell:last-child {
+  border-radius: 0 50% 50% 0;
+  background-color: #34495e;
 }
 
 .ship.placed {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: translateY(0) !important;
 }
 
 .ship:not(.placed):hover {
@@ -217,7 +319,8 @@ h2 {
 
 .ship-label {
   font-size: 0.9rem;
-  color: var(--dark-color);
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 /* Button styles */
@@ -236,25 +339,46 @@ h2 {
   cursor: pointer;
   transition: all var(--transition-speed);
   box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
+  z-index: -1;
+}
+
+.btn:hover::before {
+  left: 100%;
 }
 
 .btn-primary {
-  background-color: var(--primary-color);
+  background-color: var(--navy);
   color: white;
+  border: 2px solid var(--light-blue);
 }
 
 .btn-secondary {
-  background-color: var(--secondary-color);
+  background-color: var(--deep-blue);
   color: white;
+  border: 2px solid var(--light-blue);
 }
 
 .btn-success {
-  background-color: var(--success-color);
-  color: white;
+  background-color: var(--seafoam);
+  color: var(--navy);
 }
 
 .btn-danger {
-  background-color: var(--danger-color);
+  background-color: var(--hit-red);
   color: white;
 }
 
@@ -282,26 +406,39 @@ h2 {
 #game-over {
   text-align: center;
   margin-top: 2rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  animation: fadeIn 1s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 #winner-message {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: bold;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  color: var(--navy);
 }
 
 /* Instructions */
 .instructions {
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.9);
   padding: 1.5rem;
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
   margin-bottom: 2rem;
+  border-left: 5px solid var(--navy);
 }
 
 .instructions h3 {
-  margin-bottom: 0.5rem;
-  color: var(--secondary-color);
+  margin-bottom: 0.8rem;
+  color: var(--navy);
+  font-size: 1.2rem;
 }
 
 .instructions ul {
@@ -309,17 +446,42 @@ h2 {
   margin-left: 1rem;
 }
 
-/* Animations */
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
+.instructions li {
+  margin-bottom: 0.5rem;
+}
+
+/* Ship status panel */
+.ship-status-panel {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  margin-top: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.ship-status {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.ship-name {
+  width: 100px;
+  font-weight: bold;
+}
+
+.health-bar {
+  flex-grow: 1;
+  height: 10px;
+  background-color: #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.health {
+  height: 100%;
+  background-color: var(--seafoam);
+  transition: width 0.3s ease;
 }
 
 /* Responsive design */
@@ -342,4 +504,72 @@ h2 {
   h1 {
     font-size: 2rem;
   }
+  
+  .ships-container {
+    padding: 1rem;
+  }
+  
+  #ship-container {
+    gap: 1rem;
+  }
+}
+
+/* Radar ping effect */
+.radar-ping {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background-color: rgba(52, 152, 219, 0.7);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: ping 1s ease-out;
+  z-index: 10;
+}
+
+@keyframes ping {
+  0% {
+    transform: translate(-50%, -50%) scale(0.1);
+    opacity: 1;
+  }
+  70% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(3);
+    opacity: 0;
+  }
+}
+
+/* Compass rose styling */
+.compass-rose {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  color: var(--light-blue);
+  animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.sound-toggle {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+.sound-toggle .btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

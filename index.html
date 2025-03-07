@@ -6,11 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Battleship Game</title>
     <link rel="stylesheet" href="/src/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Battleship Game</h1>
+            <h1>BATTLESHIP</h1>
+            <div class="compass-rose">
+                <i class="fas fa-compass fa-2x"></i>
+            </div>
+            <div class="sound-toggle">
+                <button id="sound-toggle-btn" class="btn btn-secondary">
+                    <i class="fas fa-volume-up" id="sound-icon"></i>
+                </button>
+            </div>
         </header>
 
         <div class="game-status">
@@ -20,20 +29,20 @@
         <!-- Setup Phase -->
         <div id="setup-phase">
             <div class="instructions">
-                <h3>How to place your ships:</h3>
+                <h3><i class="fas fa-info-circle"></i> How to place your ships:</h3>
                 <ul>
-                    <li>Drag and drop ships from the container to your board</li>
-                    <li>Double-click a ship to rotate it between horizontal and vertical</li>
-                    <li>All ships must be placed before starting the battle</li>
-                    <li>You can use the "Random Placement" button to place ships randomly</li>
+                    <li><i class="fas fa-hand-pointer"></i> Drag and drop ships from the container to your board</li>
+                    <li><i class="fas fa-sync-alt"></i> Double-click a ship to rotate it between horizontal and vertical</li>
+                    <li><i class="fas fa-check-circle"></i> All ships must be placed before starting the battle</li>
+                    <li><i class="fas fa-random"></i> You can use the "Random Placement" button to place ships randomly</li>
                 </ul>
             </div>
 
             <div class="ships-container">
                 <div class="ships-heading">
-                    <h2>Your Ships</h2>
+                    <h2><i class="fas fa-ship"></i> Your Fleet</h2>
                     <div>
-                        <button id="random-placement-btn" class="btn btn-secondary">Random Placement</button>
+                        <button id="random-placement-btn" class="btn btn-secondary"><i class="fas fa-random"></i> Random Placement</button>
                     </div>
                 </div>
                 
@@ -87,13 +96,13 @@
                 </div>
                 
                 <div class="btn-container">
-                    <button id="start-game-btn" class="btn btn-primary" disabled>Start Battle</button>
+                    <button id="start-game-btn" class="btn btn-primary" disabled><i class="fas fa-play"></i> Start Battle</button>
                 </div>
             </div>
 
             <div class="game-container">
                 <div class="board-container">
-                    <h2>Your Board</h2>
+                    <h2><i class="fas fa-anchor"></i> Your Waters</h2>
                     <div id="player-board" class="board"></div>
                 </div>
             </div>
@@ -103,13 +112,81 @@
         <div id="battle-phase">
             <div class="game-container">
                 <div class="board-container">
-                    <h2>Your Board</h2>
+                    <h2><i class="fas fa-anchor"></i> Your Waters</h2>
                     <div id="player-board-battle" class="board"></div>
+                    
+                    <div class="ship-status-panel">
+                        <h3>Your Fleet Status</h3>
+                        <div class="ship-status" id="carrier-status">
+                            <span class="ship-name">Carrier</span>
+                            <div class="health-bar">
+                                <div class="health" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div class="ship-status" id="battleship-status">
+                            <span class="ship-name">Battleship</span>
+                            <div class="health-bar">
+                                <div class="health" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div class="ship-status" id="cruiser-status">
+                            <span class="ship-name">Cruiser</span>
+                            <div class="health-bar">
+                                <div class="health" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div class="ship-status" id="submarine-status">
+                            <span class="ship-name">Submarine</span>
+                            <div class="health-bar">
+                                <div class="health" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div class="ship-status" id="destroyer-status">
+                            <span class="ship-name">Destroyer</span>
+                            <div class="health-bar">
+                                <div class="health" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="board-container">
-                    <h2>Opponent's Board</h2>
+                    <h2><i class="fas fa-crosshairs"></i> Enemy Waters</h2>
                     <div id="computer-board" class="board"></div>
+                    
+                    <div class="ship-status-panel">
+                        <h3>Enemy Fleet Status</h3>
+                        <div class="ship-status" id="enemy-carrier-status">
+                            <span class="ship-name">Carrier</span>
+                            <div class="health-bar">
+                                <div class="health" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div class="ship-status" id="enemy-battleship-status">
+                            <span class="ship-name">Battleship</span>
+                            <div class="health-bar">
+                                <div class="health" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div class="ship-status" id="enemy-cruiser-status">
+                            <span class="ship-name">Cruiser</span>
+                            <div class="health-bar">
+                                <div class="health" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div class="ship-status" id="enemy-submarine-status">
+                            <span class="ship-name">Submarine</span>
+                            <div class="health-bar">
+                                <div class="health" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div class="ship-status" id="enemy-destroyer-status">
+                            <span class="ship-name">Destroyer</span>
+                            <div class="health-bar">
+                                <div class="health" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -118,11 +195,28 @@
         <div id="game-over">
             <h2 id="winner-message"></h2>
             <div class="btn-container">
-                <button id="reset-btn" class="btn btn-primary">Play Again</button>
+                <button id="reset-btn" class="btn btn-primary"><i class="fas fa-redo"></i> Play Again</button>
             </div>
         </div>
     </div>
 
     <script type="module" src="/src/main.js"></script>
+    
+    <!-- Sound effects -->
+    <audio id="hit-sound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-explosion-2759.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="miss-sound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-water-splash-1295.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="place-sound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-quick-win-video-game-notification-269.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="victory-sound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="defeat-sound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-retro-arcade-game-over-470.mp3" type="audio/mpeg">
+    </audio>
 </body>
 </html>
