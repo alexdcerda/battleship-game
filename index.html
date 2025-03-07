@@ -5,64 +5,121 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Battleship Game</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-        }
-        .game-container {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-        .board {
-            display: grid;
-            grid-template-columns: repeat(10, 30px);
-            grid-template-rows: repeat(10, 30px);
-            gap: 2px;
-        }
-        .cell {
-            width: 30px;
-            height: 30px;
-            background-color: #ddf;
-            border: 1px solid #99b;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-        .board-container {
-            margin: 10px;
-        }
-        .hit {
-            background-color: #f88;
-        }
-        .miss {
-            background-color: #aaa;
-        }
-        .ship {
-            background-color: #8a8;
-        }
-    </style>
+    <link rel="stylesheet" href="/src/style.css">
 </head>
 <body>
-    <h1>Battleship Game</h1>
-    <div class="game-status">
-        <p id="status-message">Place your ships on the left board</p>
-    </div>
-    <div class="game-container">
-        <div class="board-container">
-            <h2>Your Board</h2>
-            <div id="player-board" class="board"></div>
+    <div class="container">
+        <header>
+            <h1>Battleship Game</h1>
+        </header>
+
+        <div class="game-status">
+            <p id="status-message">Place your ships on the board by dragging them from the ship container</p>
         </div>
-        <div class="board-container">
-            <h2>Opponent's Board</h2>
-            <div id="computer-board" class="board"></div>
+
+        <!-- Setup Phase -->
+        <div id="setup-phase">
+            <div class="instructions">
+                <h3>How to place your ships:</h3>
+                <ul>
+                    <li>Drag and drop ships from the container to your board</li>
+                    <li>Double-click a ship to rotate it between horizontal and vertical</li>
+                    <li>All ships must be placed before starting the battle</li>
+                    <li>You can use the "Random Placement" button to place ships randomly</li>
+                </ul>
+            </div>
+
+            <div class="ships-container">
+                <div class="ships-heading">
+                    <h2>Your Ships</h2>
+                    <div>
+                        <button id="random-placement-btn" class="btn btn-secondary">Random Placement</button>
+                    </div>
+                </div>
+                
+                <div id="ship-container">
+                    <div class="ship-item">
+                        <div class="ship" draggable="true" data-ship-length="5" data-ship-id="carrier" style="--length: 5;">
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                        </div>
+                        <span class="ship-label">Carrier (5)</span>
+                    </div>
+                    
+                    <div class="ship-item">
+                        <div class="ship" draggable="true" data-ship-length="4" data-ship-id="battleship" style="--length: 4;">
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                        </div>
+                        <span class="ship-label">Battleship (4)</span>
+                    </div>
+                    
+                    <div class="ship-item">
+                        <div class="ship" draggable="true" data-ship-length="3" data-ship-id="cruiser" style="--length: 3;">
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                        </div>
+                        <span class="ship-label">Cruiser (3)</span>
+                    </div>
+                    
+                    <div class="ship-item">
+                        <div class="ship" draggable="true" data-ship-length="3" data-ship-id="submarine" style="--length: 3;">
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                        </div>
+                        <span class="ship-label">Submarine (3)</span>
+                    </div>
+                    
+                    <div class="ship-item">
+                        <div class="ship" draggable="true" data-ship-length="2" data-ship-id="destroyer" style="--length: 2;">
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                        </div>
+                        <span class="ship-label">Destroyer (2)</span>
+                    </div>
+                </div>
+                
+                <div class="btn-container">
+                    <button id="start-game-btn" class="btn btn-primary" disabled>Start Battle</button>
+                </div>
+            </div>
+
+            <div class="game-container">
+                <div class="board-container">
+                    <h2>Your Board</h2>
+                    <div id="player-board" class="board"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Battle Phase -->
+        <div id="battle-phase">
+            <div class="game-container">
+                <div class="board-container">
+                    <h2>Your Board</h2>
+                    <div id="player-board-battle" class="board"></div>
+                </div>
+                
+                <div class="board-container">
+                    <h2>Opponent's Board</h2>
+                    <div id="computer-board" class="board"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Over Phase -->
+        <div id="game-over">
+            <h2 id="winner-message"></h2>
+            <div class="btn-container">
+                <button id="reset-btn" class="btn btn-primary">Play Again</button>
+            </div>
         </div>
     </div>
 

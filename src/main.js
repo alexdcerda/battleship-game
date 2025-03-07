@@ -1,29 +1,34 @@
-import Ship from "./ship.js";
-import Gameboard from "./gameboard.js";
-import Player from "./player.js";
+import Game from './game.js';
+import { setupDragAndDrop, setupRandomPlacement } from './dragdrop.js';
+import './style.css';
 
 // DOM elements
-const playerBoardElement = document.getElementById("player-board");
-const computerBoardElement = document.getElementById("computer-board");
-const statusMessage = document.getElementById("status-message");
+const playerBoardElement = document.getElementById('player-board');
+const playerBoardBattleElement = document.getElementById('player-board-battle');
+const computerBoardElement = document.getElementById('computer-board');
+const statusMessage = document.getElementById('status-message');
+const shipContainer = document.getElementById('ship-container');
+const startGameBtn = document.getElementById('start-game-btn');
+const randomPlacementBtn = document.getElementById('random-placement-btn');
+const resetBtn = document.getElementById('reset-btn');
+const gamePhaseElements = {
+  setup: document.getElementById('setup-phase'),
+  battle: document.getElementById('battle-phase'),
+  gameOver: document.getElementById('game-over')
+};
 
-// Create players
-const humanPlayer = Player(false); // Human player
-const computerPlayer = Player(true); // Computer player
-
-// Track previous attacks to avoid duplicates
-const previousHumanAttacks = [];
-const previousComputerAttacks = [];
+// Create game instance
+const game = new Game();
 
 // Create 10 x 10 board
 const renderBoard = (boardElement, gameboard, hideShips = false) => {
-  boardElement.innerHTML = "";
+  boardElement.innerHTML = '';
   const board = gameboard.getBoard();
   
   for (let row = 0; row < 10; row++) {
     for (let col = 0; col < 10; col++) {
-      const cell = document.createElement("div");
-      cell.classList.add("cell");
+      const cell = document.createElement('div');
+      cell.classList.add('cell');
       cell.dataset.row = row;
       cell.dataset.col = col;
       
@@ -37,52 +42,63 @@ const renderBoard = (boardElement, gameboard, hideShips = false) => {
   }
 };
 
-// Initial board rendering
-renderBoard(playerBoardElement, humanPlayer.gameboard);
-renderBoard(computerBoardElement, computerPlayer.gameboard, true); // Hide computer ships
-
-// Place ships on the player's board
-const placePlayerShip = (length, row, col, isHorizontal) => {
-  // place the ship on the gameboard
-  const success = humanPlayer.gameboard.placeShip(length, row, col, isHorizontal);
-  
-  if (success) {
-    // Re-render the board to show the ship
-    renderBoard(playerBoardElement, humanPlayer.gameboard);
-    return true;
-  }
-  
-  return false;
+// Show the appropriate game phase UI
+const updateGamePhaseUI = (phase) => {
+  Object.keys(gamePhaseElements).forEach(key => {
+    if (gamePhaseElements[key]) {
+      gamePhaseElements[key].style.display = key === phase ? 'block' : 'none';
+    }
+  });
 };
 
-// Place some example ships for the human player
-placePlayerShip(5, 0, 0, true);
-placePlayerShip(4, 2, 3, true);
-placePlayerShip(3, 4, 5, false);
-placePlayerShip(3, 6, 1, true);
-placePlayerShip(2, 8, 7, true);
+// Initialize boards
+renderBoard(playerBoardElement, game.humanPlayer.gameboard);
+renderBoard(computerBoardElement, game.computerPlayer.gameboard, true);
 
-// Place ships randomly for the computer
-computerPlayer.placeShipsRandomly([5, 4, 3, 3, 2]);
+// Setup drag and drop for ship placement
+setupDragAndDrop(game, shipContainer, playerBoardElement, renderBoard);
+
+// Setup random placement button
+setupRandomPlacement(game, shipContainer, playerBoardElement, renderBoard);
+
+// Start game button event listener
+startGameBtn.addEventListener('click', () => {
+  const result = game.initializeGame();
+  
+  if (result.success) {
+    // Render the battle boards
+    renderBoard(playerBoardBattleElement, game.humanPlayer.gameboard);
+    renderBoard(computerBoardElement, game.computerPlayer.gameboard, true);
+    
+    updateGamePhaseUI('battle');
+    statusMessage.textContent = 'Game started! Click on the opponent\'s board to attack.';
+  } else {
+    statusMessage.textContent = result.message;
+  }
+});
+
+// Reset button event listener
+resetBtn.addEventListener('click', () => {
+  // Create a new game
+  window.location.reload();
+});
 
 // Handle player attacks on computer board
 computerBoardElement.addEventListener('click', (e) => {
+  if (game.getGameStatus() !== 'playing') return;
+  
   if (e.target.classList.contains('cell')) {
     const row = parseInt(e.target.dataset.row);
     const col = parseInt(e.target.dataset.col);
     
-    // Check if this cell has already been attacked
-    if (e.target.classList.contains('hit') || e.target.classList.contains('miss')) {
+    // Process the attack
+    const result = game.playerAttack(row, col);
+    
+    if (!result || !result.valid) {
       return;
     }
     
-    // Add to previous attacks
-    previousHumanAttacks.push({ row, col });
-    
-    // Process the attack
-    const isHit = humanPlayer.attack(computerPlayer.gameboard, row, col);
-    
-    if (isHit) {
+    if (result.hit) {
       e.target.classList.add('hit');
       statusMessage.textContent = 'Hit!';
     } else {
@@ -90,10 +106,12 @@ computerBoardElement.addEventListener('click', (e) => {
       statusMessage.textContent = 'Miss!';
     }
     
-    // Check if all ships are sunk
-    if (computerPlayer.gameboard.allShipsSunk()) {
+    // Check if game is over
+    if (result.gameOver) {
       statusMessage.textContent = 'You win! All enemy ships are sunk!';
-      return; // Game over
+      document.getElementById('winner-message').textContent = 'Congratulations! You won!';
+      updateGamePhaseUI('gameOver');
+      return;
     }
     
     // Computer's turn to attack
@@ -103,14 +121,14 @@ computerBoardElement.addEventListener('click', (e) => {
 
 // Handle computer attacks on player board
 const computerTurn = () => {
-  // Computer makes a random attack
-  const attack = computerPlayer.makeRandomAttack(humanPlayer.gameboard, previousComputerAttacks);
-  previousComputerAttacks.push({ row: attack.row, col: attack.col });
+  const result = game.computerAttack();
+  
+  if (!result) return;
   
   // Update the UI
-  const cell = playerBoardElement.querySelector(`[data-row="${attack.row}"][data-col="${attack.col}"]`);
+  const cell = playerBoardBattleElement.querySelector(`[data-row="${result.row}"][data-col="${result.col}"]`);
   
-  if (attack.hit) {
+  if (result.hit) {
     cell.classList.add('hit');
     statusMessage.textContent = 'Computer hit your ship!';
   } else {
@@ -118,13 +136,13 @@ const computerTurn = () => {
     statusMessage.textContent = 'Computer missed!';
   }
   
-  // Check if all player ships are sunk
-  if (humanPlayer.gameboard.allShipsSunk()) {
+  // Check if game is over
+  if (result.gameOver) {
     statusMessage.textContent = 'Computer wins! All your ships are sunk!';
+    document.getElementById('winner-message').textContent = 'Computer won! Better luck next time.';
+    updateGamePhaseUI('gameOver');
   }
 };
 
-// For demonstration: Export factories to make them accessible in the browser console
-window.Ship = Ship;
-window.Gameboard = Gameboard;
-window.Player = Player;
+// Show setup phase initially
+updateGamePhaseUI('setup');
