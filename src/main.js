@@ -9,7 +9,6 @@ const computerBoardElement = document.getElementById('computer-board');
 const statusMessage = document.getElementById('status-message');
 const shipContainer = document.getElementById('ship-container');
 const startGameBtn = document.getElementById('start-game-btn');
-const randomPlacementBtn = document.getElementById('random-placement-btn');
 const resetBtn = document.getElementById('reset-btn');
 const soundToggleBtn = document.getElementById('sound-toggle-btn');
 const soundIcon = document.getElementById('sound-icon');
